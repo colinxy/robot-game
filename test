@@ -1,0 +1,5 @@
+#! /bin/sh
+
+make test
+./test_robots | ./check_output.py
+make clean
