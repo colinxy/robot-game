@@ -13,15 +13,12 @@ using namespace std;
 //  Robot implementation
 ///////////////////////////////////////////////////////////////////////////
 
-Robot::Robot(Arena* ap, int r, int c)
-{
-    if (ap == nullptr)
-    {
+Robot::Robot(Arena* ap, int r, int c) {
+    if (ap == nullptr) {
         cout << "***** A robot must be in some Arena!" << endl;
         exit(1);
     }
-    if (r < 1  ||  r > ap->rows()  ||  c < 1  ||  c > ap->cols())
-    {
+    if (r < 1  ||  r > ap->rows()  ||  c < 1  ||  c > ap->cols()) {
         cout << "***** Robot created with invalid coordinates (" << r << ","
              << c << ")!" << endl;
         exit(1);
@@ -32,26 +29,22 @@ Robot::Robot(Arena* ap, int r, int c)
     m_timesAttacked = 0;
 }
 
-int Robot::row() const
-{
+int Robot::row() const {
     return m_row;
 }
 
-int Robot::col() const
-{
+int Robot::col() const {
     return m_col;
 }
 
-void Robot::move()
-{
+void Robot::move() {
       // Attempt to move in a random direction; if we can't move, don't move
     int dir = randInt(0, 3);  // dir is now UP, DOWN, LEFT, or RIGHT
 
     m_arena->determineNewPosition(m_row, m_col, dir);
 }
 
-bool Robot::getAttacked(int dir)  // return true if dies
-{
+bool Robot::getAttacked(int dir) { // return true if dies
       // If the robot has been attacked once before, return true
       // (since a second attack kills a robot).  Otherwise, if possible, move
       // the robot in one position in direction dir and return false (since
@@ -76,15 +69,12 @@ bool Robot::getAttacked(int dir)  // return true if dies
 //  Player implementations
 ///////////////////////////////////////////////////////////////////////////
 
-Player::Player(Arena* ap, int r, int c)
-{
-    if (ap == nullptr)
-    {
+Player::Player(Arena* ap, int r, int c) {
+    if (ap == nullptr) {
         cout << "***** The player must be in some Arena!" << endl;
         exit(1);
     }
-    if (r < 1  ||  r > ap->rows()  ||  c < 1  ||  c > ap->cols())
-    {
+    if (r < 1  ||  r > ap->rows()  ||  c < 1  ||  c > ap->cols()) {
         cout << "**** Player created with invalid coordinates (" << r
              << "," << c << ")!" << endl;
         exit(1);
@@ -96,28 +86,23 @@ Player::Player(Arena* ap, int r, int c)
     m_dead = false;
 }
 
-int Player::row() const
-{
+int Player::row() const {
     return m_row;
 }
 
-int Player::col() const
-{
+int Player::col() const {
     return m_col;
 }
 
-int Player::age() const
-{
+int Player::age() const {
     return m_age;
 }
 
-void Player::stand()
-{
+void Player::stand() {
     m_age++;
 }
 
-void Player::moveOrAttack(int dir)
-{
+void Player::moveOrAttack(int dir) {
     m_age++;
       // If there is a robot adjacent to the player in the direction
       // dir, attack it.  Otherwise, move the player to that position if
@@ -167,13 +152,11 @@ void Player::moveOrAttack(int dir)
     m_arena->attackRobotAt(row_num, col_num, dir);
 }
 
-bool Player::isDead() const
-{
+bool Player::isDead() const {
     return m_dead;
 }
 
-void Player::setDead()
-{
+void Player::setDead() {
     m_dead = true;
 }
 
@@ -181,8 +164,7 @@ void Player::setDead()
 //  Arena implementations
 ///////////////////////////////////////////////////////////////////////////
 
-Arena::Arena(int nRows, int nCols)
-{
+Arena::Arena(int nRows, int nCols) {
     if (nRows <= 0  ||  nCols <= 0  ||  nRows > MAXROWS  ||  nCols > MAXCOLS)
     {
         cout << "***** Arena created with invalid size " << nRows << " by "
@@ -195,8 +177,7 @@ Arena::Arena(int nRows, int nCols)
     m_nRobots = 0;
 }
 
-Arena::~Arena()
-{
+Arena::~Arena() {
       // Delete the player and all remaining dynamically allocated robots.
 
     delete m_player;
@@ -205,28 +186,23 @@ Arena::~Arena()
     }
 }
 
-int Arena::rows() const
-{
+int Arena::rows() const {
     return m_rows;
 }
 
-int Arena::cols() const
-{
+int Arena::cols() const {
     return m_cols;
 }
 
-Player* Arena::player() const
-{
+Player* Arena::player() const {
     return m_player;
 }
 
-int Arena::robotCount() const
-{
+int Arena::robotCount() const {
     return m_nRobots;
 }
 
-int Arena::nRobotsAt(int r, int c) const
-{
+int Arena::nRobotsAt(int r, int c) const {
       // Return the number of robots at row r, column c.
     int count = 0;
     for (int i = 0; i < m_nRobots; i++) {
@@ -238,16 +214,14 @@ int Arena::nRobotsAt(int r, int c) const
     return count;
 }
 
-bool Arena::determineNewPosition(int& r, int& c, int dir)
-{
+bool Arena::determineNewPosition(int& r, int& c, int dir) {
       // If a move from row r, column c, one step in direction dir
       // would go off the edge of the arena, leave r and c unchanged and
       // return false.  Otherwise, set r or c so that row r, column c, is
       // now the new position resulting from the proposed move, and
       // return true.
 
-    switch (dir)
-    {
+    switch (dir) {
       case UP:
         if (r > 1)      r--;
         else            return false;
@@ -270,8 +244,7 @@ bool Arena::determineNewPosition(int& r, int& c, int dir)
     return true;
 }
 
-void Arena::display() const
-{
+void Arena::display() const {
       // Position (row,col) in the arena coordinate system is represented in
       // the array element grid[row-1][col-1]
     char grid[MAXROWS][MAXCOLS];
@@ -302,8 +275,7 @@ void Arena::display() const
     }
 
         // Indicate player's position
-    if (m_player != nullptr)
-    {
+    if (m_player != nullptr) {
           // Set the char to '@', unless there's also a robot there,
           // in which case set it to '*'.
         char& gridChar = grid[m_player->row()-1][m_player->col()-1];
@@ -315,8 +287,7 @@ void Arena::display() const
 
         // Draw the grid
     clearScreen();
-    for (r = 0; r < rows(); r++)
-    {
+    for (r = 0; r < rows(); r++) {
         for (c = 0; c < cols(); c++)
             cout << grid[r][c];
         cout << endl;
@@ -328,8 +299,7 @@ void Arena::display() const
     cout << "There are " << robotCount() << " robots remaining." << endl;
     if (m_player == nullptr)
         cout << "There is no player." << endl;
-    else
-    {
+    else {
         if (m_player->age() > 0)
             cout << "The player has lasted " << m_player->age() << " steps." << endl;
         if (m_player->isDead())
@@ -337,8 +307,7 @@ void Arena::display() const
     }
 }
 
-bool Arena::addRobot(int r, int c)
-{
+bool Arena::addRobot(int r, int c) {
       // If MAXROBOTS have already been added, return false.  Otherwise,
       // dynamically allocate a new robot at coordinates (r,c).  Save the
       // pointer to the newly allocated robot and return true.
@@ -352,8 +321,7 @@ bool Arena::addRobot(int r, int c)
     return true;
 }
 
-bool Arena::addPlayer(int r, int c)
-{
+bool Arena::addPlayer(int r, int c) {
       // Don't add a player if one already exists
     if (m_player != nullptr)
         return false;
@@ -363,8 +331,7 @@ bool Arena::addPlayer(int r, int c)
     return true;
 }
 
-bool Arena::attackRobotAt(int r, int c, int dir)
-{
+bool Arena::attackRobotAt(int r, int c, int dir) {
       // Attack one robot at row r, column c if at least one is at
       // that position.  If the robot does not survive the damage, destroy the
       // robot object, removing it from the arena, and return true.  Otherwise,
@@ -374,8 +341,7 @@ bool Arena::attackRobotAt(int r, int c, int dir)
 
     bool robotDead = false;
     int index = 0;
-    for (index = 0; index < m_nRobots; index++)
-    {
+    for (; index < m_nRobots; index++) {
         Robot* &robot = m_robots[index];
         if (robot->row() == r && robot->col() == c) {
             // cerr << "ONE ROBOT ATTACKED" << endl;
@@ -405,10 +371,8 @@ bool Arena::attackRobotAt(int r, int c, int dir)
     return true;
 }
 
-bool Arena::moveRobots()
-{
-    for (int k = 0; k < m_nRobots; k++)
-    {
+bool Arena::moveRobots() {
+    for (int k = 0; k < m_nRobots; k++) {
         // Have the k-th robot in the arena make one move.
         // If that move results in that robot being in the same
         // position as the player, the player dies.
@@ -428,21 +392,17 @@ bool Arena::moveRobots()
 //  Game implementations
 ///////////////////////////////////////////////////////////////////////////
 
-Game::Game(int rows, int cols, int nRobots)
-{
-    if (nRobots < 0)
-    {
+Game::Game(int rows, int cols, int nRobots) {
+    if (nRobots < 0) {
         cout << "***** Cannot create Game with negative number of robots!" << endl;
         exit(1);
     }
-    if (nRobots > MAXROBOTS)
-    {
+    if (nRobots > MAXROBOTS) {
         cout << "***** Trying to create Game with " << nRobots
              << " robots; only " << MAXROBOTS << " are allowed!" << endl;
         exit(1);
     }
-    if (rows == 1  &&  cols == 1  &&  nRobots > 0)
-    {
+    if (rows == 1  &&  cols == 1  &&  nRobots > 0) {
         cout << "***** Cannot create Game with nowhere to place the robots!" << endl;
         exit(1);
     }
@@ -456,8 +416,7 @@ Game::Game(int rows, int cols, int nRobots)
     m_arena->addPlayer(rPlayer, cPlayer);
 
       // Populate with robots
-    while (nRobots > 0)
-    {
+    while (nRobots > 0) {
         int r = randInt(1, rows);
         int c = randInt(1, cols);
           // Don't put a robot where the player is
@@ -468,21 +427,17 @@ Game::Game(int rows, int cols, int nRobots)
     }
 }
 
-Game::~Game()
-{
+Game::~Game() {
     delete m_arena;
 }
 
-void Game::play()
-{
+void Game::play() {
     Player* p = m_arena->player();
-    if (p == nullptr)
-    {
+    if (p == nullptr) {
         m_arena->display();
         return;
     }
-    do
-    {
+    do {
         m_arena->display();
         cout << endl;
         cout << "Move (u/d/l/r//q): ";

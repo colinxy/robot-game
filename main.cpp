@@ -4,8 +4,7 @@ using namespace std;
 
 #include "robots.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     bool fromCmd = false;
     int rows, cols, nRobots;
     if (argc == 4) {

@@ -26,8 +26,7 @@ const int RIGHT = 3;
 class Arena;  // This is needed to let the compiler know that Arena is a
               // type name, since it's mentioned in the Robot declaration.
 
-class Robot
-{
+class Robot {
   public:
         // Constructor
     Robot(Arena* ap, int r, int c);
@@ -47,8 +46,7 @@ class Robot
     int    m_timesAttacked;
 };
 
-class Player
-{
+class Player {
   public:
         // Constructor
     Player(Arena *ap, int r, int c);
@@ -72,8 +70,7 @@ class Player
     bool   m_dead;
 };
 
-class Arena
-{
+class Arena {
   public:
         // Constructor/destructor
     Arena(int nRows, int nCols);
@@ -102,8 +99,7 @@ class Arena
     int     m_nRobots;
 };
 
-class Game
-{
+class Game {
   public:
         // Constructor/destructor
     Game(int rows, int cols, int nRobots);

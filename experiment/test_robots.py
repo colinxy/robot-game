@@ -202,12 +202,12 @@ def main():
 
     # compile the test file
     # if compile fails, exit the program
-    compile_cmd = ' '.join([COMPILER, '-o ' + EXEC, FILE, FLAG])
+    compile_cmd = ' '.join([COMPILER, '-o', EXEC, FILE, FLAG])
     if subprocess.call(compile_cmd,
                        # stdout=subprocess.PIPE,
                        # stderr=subprocess.PIPE,
                        shell=True) != 0:
-        subprocess.call(' '.join(['rm', '-f', HEADER, EXEC]), shell=True)
+        # subprocess.call(' '.join(['rm', '-f', HEADER, EXEC]), shell=True)
         sys.exit()
 
     output = subprocess.check_output('./' + EXEC, shell=True).decode(ENCODING)
@@ -217,7 +217,7 @@ def main():
         print(FAILURE_MSG)
         print(output)
 
-    subprocess.call(' '.join(['rm' + ' -f', HEADER, EXEC]), shell=True)
+    subprocess.call(' '.join(['rm', '-f', HEADER, EXEC]), shell=True)
 
 
 if __name__ == '__main__':
