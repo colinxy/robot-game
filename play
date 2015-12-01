@@ -1,0 +1,14 @@
+#! /bin/sh
+
+make -s
+
+if [ -n $1 ] && [ -n $2 ] && [ -n $3 ]; then
+    # echo =$1=
+    # echo =$2=
+    # echo =$3=
+    ./play_robots $1 $2 $3
+else
+    ./play_robots
+fi
+
+make clean -s
