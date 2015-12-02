@@ -23,7 +23,7 @@ FAILURE_MSG = (
     "\n"
 )
 
-PLAYER_TEST = \
+PLAYER_TEST = [
 """\x1b[2J\x1b[H.....
 .....
 .....
@@ -32,7 +32,9 @@ PLAYER_TEST = \
 
 
 There are 3 robots remaining.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 .RR@.
@@ -41,7 +43,9 @@ There are 3 robots remaining.
 
 There are 3 robots remaining.
 The player has lasted 1 steps.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 .2.@.
@@ -50,7 +54,9 @@ The player has lasted 1 steps.
 
 There are 3 robots remaining.
 The player has lasted 2 steps.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 .2.@.
@@ -59,7 +65,9 @@ The player has lasted 2 steps.
 
 There are 2 robots remaining.
 The player has lasted 3 steps.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 .2@..
@@ -68,7 +76,9 @@ The player has lasted 3 steps.
 
 There are 2 robots remaining.
 The player has lasted 4 steps.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 .R@..
@@ -77,7 +87,9 @@ The player has lasted 4 steps.
 
 There are 1 robots remaining.
 The player has lasted 5 steps.
-\x1b[2J\x1b[H.....
+""",
+
+"""\x1b[2J\x1b[H.....
 .....
 .....
 ..@..
@@ -86,18 +98,23 @@ The player has lasted 5 steps.
 
 There are 0 robots remaining.
 The player has lasted 6 steps.
-\x1b[2J\x1b[HR@.
+""",
+
+"""\x1b[2J\x1b[HR@.
 
 
 There are 1 robots remaining.
-\x1b[2J\x1b[H.*.
+""",
+
+"""\x1b[2J\x1b[H.*.
 
 
 There are 1 robots remaining.
 The player is dead.
 """
+]
 
-ARENA_TEST = \
+ARENA_TEST = [
 """\x1b[2J\x1b[H.R...
 .....
 ...9.
@@ -106,7 +123,9 @@ ARENA_TEST = \
 
 
 There are 12 robots remaining.
-\x1b[2J\x1b[H.R...
+""",
+
+"""\x1b[2J\x1b[H.R...
 .....
 ...9.
 ..R@.
@@ -114,7 +133,9 @@ There are 12 robots remaining.
 
 
 There are 12 robots remaining.
-\x1b[2J\x1b[H.R...
+""",
+
+"""\x1b[2J\x1b[H.R...
 .....
 ...9.
 ..R*.
@@ -123,42 +144,57 @@ There are 12 robots remaining.
 
 There are 13 robots remaining.
 The player is dead.
-\x1b[2J\x1b[H..R.
+""",
+
+"""\x1b[2J\x1b[H..R.
 .R@.
 .R..
 
 
 There are 3 robots remaining.
-\x1b[2J\x1b[H..R.
+""",
+
+"""\x1b[2J\x1b[H..R.
 R.@.
 .R..
 
 
 There are 3 robots remaining.
-\x1b[2J\x1b[H....
+""",
+
+"""\x1b[2J\x1b[H....
 R.@.
 .R..
 
 
 There are 2 robots remaining.
-\x1b[2J\x1b[H....
+""",
+
+"""\x1b[2J\x1b[H....
 R.@.
 .R..
 
 
 There are 2 robots remaining.
-\x1b[2J\x1b[H*
+""",
+
+"""\x1b[2J\x1b[H*
 
 
 There are 1 robots remaining.
-\x1b[2J\x1b[H*
+""",
+
+"""\x1b[2J\x1b[H*
 
 
 There are 1 robots remaining.
 The player is dead.
 """
+]
 
-OUTPUT = PLAYER_TEST + ARENA_TEST + "all test passed\n"
+EXPECTED_OUTPUT = ''.join(PLAYER_TEST) + \
+                  ''.join(ARENA_TEST) + \
+                  "all assertion test passed\n"
 
 ENCODING = 'utf-8'
 
@@ -174,6 +210,50 @@ PATTERN_PRIVATE = re.compile(r'private\s*:')
 # match main function signiture
 PATTERN_MAIN    = re.compile(r'[(int)(void)]\s+main\s*\(')
 MAIN            = re.compile(r'main')
+
+
+def find_diff(output):
+    print("NOTICE: the report below is incomprehensive\n")
+
+    # find the first index where output does not agree
+    diff_index = -1
+    # print(output)
+    for c1, c2 in zip(output, EXPECTED_OUTPUT):
+        diff_index += 1
+        if c1 != c2:
+            break
+
+    test_str_index = 0
+
+    for p_index in range(len(PLAYER_TEST)):
+        test_str_index += len(PLAYER_TEST[p_index])
+        if test_str_index > diff_index:
+            start = test_str_index - len(PLAYER_TEST[p_index])
+            end =  test_str_index
+            print('\n'.join([
+                "In class Player, {}th output\n".format(p_index+1),
+                "EXPECTED:\n",
+                PLAYER_TEST[p_index],
+                "\nGOT:\n",
+                output[start:end]
+            ]))
+            # assert PLAYER_TEST[p_index] != output[start:end]
+            return
+
+    for a_index in range(len(ARENA_TEST)):
+        test_str_index += len(ARENA_TEST[a_index])
+        if test_str_index > diff_index:
+            start = test_str_index - len(ARENA_TEST[a_index])
+            end = test_str_index
+            print('\n'.join([
+                "In class Arena, {}th output\n".format(a_index+1),
+                "EXPECTED:\n",
+                ARENA_TEST[a_index],
+                "\nGOT:\n",
+                output[start:end],
+            ]))
+            # assert ARENA_TEST[a_index] != output[start:end]
+            return
 
 
 def main():
@@ -211,11 +291,12 @@ def main():
         sys.exit()
 
     output = subprocess.check_output('./' + EXEC, shell=True).decode(ENCODING)
-    if OUTPUT == output:
+    if EXPECTED_OUTPUT == output:
         print(SUCCESS_MSG)
     else:
         print(FAILURE_MSG)
-        print(output)
+        # print(output)
+        find_diff(output)
 
     subprocess.call(' '.join(['rm', '-f', HEADER, EXEC]), shell=True)
 

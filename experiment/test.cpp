@@ -62,12 +62,14 @@ void player_test() {
     /********************
     * Player test
     ********************/
+
+    // new board of size 5 * 3
     Arena *arena = new Arena(5, 5);
     arena->addRobot(4, 3);
     arena->addRobot(5, 4);
     arena->addRobot(4, 3);
     arena->addPlayer(4, 4);
-    arena->display();
+    // arena->display();
 
     arena->m_player->moveOrAttack(LEFT);
     arena->display();
@@ -89,7 +91,8 @@ void player_test() {
     arena->display();
 
     delete arena;
-    
+
+    // new board of size 1 * 3
     arena = new Arena(1, 3);
     arena->addRobot(1, 1);
     arena->addPlayer(1, 2);
@@ -110,6 +113,8 @@ void arena_test() {
     /********************
     * Arena test
     ********************/
+
+    // new board of size 5 * 5
     Arena *arena = new Arena(5, 5);
     arena->addPlayer(4, 4);
     for (int i = 0; i < 10; ++i) {
@@ -136,6 +141,7 @@ void arena_test() {
     delete arena;
 
     // bool Arena::attackRobotAt(int r, int c, int dir)
+    // new board of size 3 * 4
     arena = new Arena(3, 4);
     arena->addRobot(1, 3);
     arena->addRobot(2, 2);
@@ -158,6 +164,7 @@ void arena_test() {
     delete arena;
 
     // bool Arena::moveRobots()
+    // new board of size 1 * 1
     arena = new Arena(1, 1);
     arena->addRobot(1, 1);
     arena->addPlayer(1, 1);
@@ -176,6 +183,6 @@ int main()
     robot_test();
     player_test();
     arena_test();
-    cout << "all test passed" << endl;
+    cout << "all assertion test passed" << endl;
     return 0;
 }

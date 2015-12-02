@@ -214,7 +214,7 @@ int Arena::nRobotsAt(int r, int c) const {
     return count;
 }
 
-bool Arena::determineNewPosition(int& r, int& c, int dir) {
+bool Arena::determineNewPosition(int& r, int& c, int dir) const {
       // If a move from row r, column c, one step in direction dir
       // would go off the edge of the arena, leave r and c unchanged and
       // return false.  Otherwise, set r or c so that row r, column c, is

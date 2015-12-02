@@ -82,7 +82,7 @@ class Arena {
     Player* player() const;
     int     robotCount() const;
     int     nRobotsAt(int r, int c) const;
-    bool    determineNewPosition(int& r, int& c, int dir);
+    bool    determineNewPosition(int& r, int& c, int dir) const;
     void    display() const;
 
         // Mutators
