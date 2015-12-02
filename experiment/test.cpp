@@ -69,7 +69,7 @@ void player_test() {
     arena->addRobot(5, 4);
     arena->addRobot(4, 3);
     arena->addPlayer(4, 4);
-    // arena->display();
+    arena->display();
 
     arena->m_player->moveOrAttack(LEFT);
     arena->display();
