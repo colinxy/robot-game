@@ -109,47 +109,18 @@ void Player::moveOrAttack(int dir) {
       // possible (i.e., if the move would not be off the edge of the arena).
 
     // a robot at position row_num, col_num
-    int row_num;
-    int col_num;
+    int row_num = row();
+    int col_num = col();
+    m_arena->determineNewPosition(row_num, col_num, dir);
 
-    if (dir == UP) {
-        row_num = row()-1;
-        col_num = col();
-
-        if (m_arena->nRobotsAt(row_num, col_num) == 0) {
-            m_arena->determineNewPosition(m_row, m_col, dir);
-            return;
-        }
-    } else if (dir == DOWN) {
-        row_num = row()+1;
-        col_num = col();
-
-        if (m_arena->nRobotsAt(row_num, col_num) == 0) {
-            m_arena->determineNewPosition(m_row, m_col, dir);
-            return;
-        }
-    } else if (dir == LEFT) {
-        row_num = row();
-        col_num = col()-1;
-
-        if (m_arena->nRobotsAt(row_num, col_num) == 0) {
-            m_arena->determineNewPosition(m_row, m_col, dir);
-            return;
-        }
-    } else if (dir == RIGHT) {
-        row_num = row();
-        col_num = col()+1;
-
-        if (m_arena->nRobotsAt(row_num, col_num) == 0) {
-            m_arena->determineNewPosition(m_row, m_col, dir);
-            return;
-        }
+    if (m_arena->nRobotsAt(row_num, col_num) == 0) {
+        // no robot at new position
+        // move the player
+        m_arena->determineNewPosition(m_row, m_col, dir);
     } else {
-        assert(false);
+        // attack robot at new position
+        m_arena->attackRobotAt(row_num, col_num, dir);
     }
-
-    // attack robot
-    m_arena->attackRobotAt(row_num, col_num, dir);
 }
 
 bool Player::isDead() const {
@@ -344,7 +315,6 @@ bool Arena::attackRobotAt(int r, int c, int dir) {
     for (; index < m_nRobots; index++) {
         Robot* &robot = m_robots[index];
         if (robot->row() == r && robot->col() == c) {
-            // cerr << "ONE ROBOT ATTACKED" << endl;
             robotDead = robot->getAttacked(dir);
             break;
         }
@@ -355,18 +325,11 @@ bool Arena::attackRobotAt(int r, int c, int dir) {
     }
 
     // If the robot does not survive the damage
-    // cerr << "ONE ROBOT KILLED" << endl;
     delete m_robots[index];
-    // cerr << "MEMORY RELEASED" << endl;
     m_robots[index] = nullptr;
-    // cerr << "SET TO NULL POINTER" << endl;
     // decrement the number of robots
-    m_nRobots--;
-    // cerr << "NUMBER OF ROBOTS: " << m_nRobots << endl;
-    // move other robots backward
-    for (; index < m_nRobots; index++) {
-        m_robots[index] = m_robots[index+1];
-    }
+    // set the pointer to robot at index to the pointer to the last one
+    m_robots[index] = m_robots[--m_nRobots];
 
     return true;
 }
