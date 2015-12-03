@@ -13,7 +13,6 @@
 #include <random>
 #include <utility>
 #include <cstdlib>
-#include <cassert>
 using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -285,7 +284,7 @@ void Player::moveOrAttack(int dir)
             return;
         }
     } else {
-        assert(false);
+        return;
     }
 
     // attack robot
@@ -668,8 +667,11 @@ int randInt(int min, int max)
 //  main()
 ///////////////////////////////////////////////////////////////////////////
 
+void doBasicTests();
+
 int main()
 {
+    // doBasicTests();
       // Create a game
       // Use this instead to create a mini-game:   Game g(3, 4, 2);
     Game g(7, 8, 25);
@@ -728,3 +730,95 @@ void clearScreen()  // will just write a newline in an Xcode output window
 }
 
 #endif
+
+#include <type_traits>
+#include <cassert>
+
+#define CHECKTYPE(c, f, r, a)  \
+	static_assert(std::is_same<decltype(&c::f), r (c::*)a>::value, \
+	   "FAILED: You changed the type of " #c "::" #f);  \
+	[[gnu::unused]] r (c::* xxx##c##_##f) a = &c::f
+
+void thisFunctionWillNeverBeCalled()
+{
+      // If the student deleted or changed the interfaces to the public
+      // functions, this won't compile.  (This uses magic beyond the scope
+      // of CS 31.)
+
+    Robot(static_cast<Arena*>(0), 1, 1);
+    CHECKTYPE(Robot, row, int, () const);
+    CHECKTYPE(Robot, col, int, () const);
+    CHECKTYPE(Robot, move, void, ());
+    CHECKTYPE(Robot, getAttacked, bool, (int));
+
+    Player(static_cast<Arena*>(0), 1, 1);
+    CHECKTYPE(Player, row, int, () const);
+    CHECKTYPE(Player, col, int, () const);
+    CHECKTYPE(Player, age, int, () const);
+    CHECKTYPE(Player, isDead, bool, () const);
+    CHECKTYPE(Player, stand, void, ());
+    CHECKTYPE(Player, moveOrAttack, void, (int));
+    CHECKTYPE(Player, setDead, void, ());
+
+    Arena(1, 1);
+    CHECKTYPE(Arena, rows, int, () const);
+    CHECKTYPE(Arena, cols, int, () const);
+    CHECKTYPE(Arena, player, Player*, () const);
+    CHECKTYPE(Arena, robotCount, int, () const);
+    CHECKTYPE(Arena, nRobotsAt, int, (int, int) const);
+    CHECKTYPE(Arena, determineNewPosition, bool, (int&, int&, int) const);
+    CHECKTYPE(Arena, display, void, () const);
+    CHECKTYPE(Arena, addRobot, bool, (int, int));
+    CHECKTYPE(Arena, addPlayer, bool, (int, int));
+    CHECKTYPE(Arena, attackRobotAt, bool, (int, int, int));
+    CHECKTYPE(Arena, moveRobots, bool, ());
+
+    Game(1,1,1);
+    CHECKTYPE(Game, play, void, ());
+}
+
+void doBasicTests()
+{
+    {
+        Arena a(10, 20);
+        assert(a.addPlayer(2, 6));
+        Player* pp = a.player();
+        assert(pp->row() == 2  &&  pp->col() == 6  && ! pp->isDead());
+        pp->moveOrAttack(UP);
+        assert(pp->row() == 1  &&  pp->col() == 6  && ! pp->isDead());
+        pp->moveOrAttack(UP);
+        assert(pp->row() == 1  &&  pp->col() == 6  && ! pp->isDead());
+        pp->setDead();
+        assert(pp->row() == 1  &&  pp->col() == 6  && pp->isDead());
+    }
+    {
+        Arena a(2, 2);
+        assert(a.addPlayer(1, 1));
+        assert(a.addRobot(2, 2));
+        Player* pp = a.player();
+        assert(a.moveRobots());
+	assert( ! pp->isDead());
+        for (int k = 0; k < 1000  &&  ! pp->isDead()  &&  a.moveRobots(); k++)
+            ;
+	assert(pp->isDead());
+    }
+    {
+        Arena a(2, 6);
+        assert(a.addPlayer(2, 1));
+        assert(a.addRobot(2, 3));
+        Player* pp = a.player();
+	pp->moveOrAttack(RIGHT);
+        assert(a.robotCount() == 1  &&  a.nRobotsAt(2, 3) == 1);
+	pp->moveOrAttack(RIGHT);
+        assert(a.robotCount() == 1  &&  a.nRobotsAt(2, 4) == 1);
+	pp->moveOrAttack(RIGHT);
+        assert(a.robotCount() == 1  &&  a.nRobotsAt(2, 4) == 1);
+	pp->moveOrAttack(RIGHT);
+        assert(a.robotCount() == 0  &&  a.nRobotsAt(2, 4) == 0   &&  a.nRobotsAt(2, 5) == 0);
+	a.addRobot(1, 3);
+        assert(a.robotCount() == 1  &&  a.nRobotsAt(1, 3) == 1);
+	pp->moveOrAttack(UP);
+        assert(a.robotCount() == 0  &&  a.nRobotsAt(1, 3) == 0);
+    }
+    cout << "Passed all basic tests" << endl;
+}
