@@ -272,7 +272,7 @@ def main():
             # and rename it to something harmless
             elif PATTERN_MAIN.search(line):
                 # print(line)
-                header.write(MAIN.sub('main__', line))
+                header.write(MAIN.sub('main_', line))
 
             else:
                 header.write(line)

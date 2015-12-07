@@ -326,7 +326,6 @@ bool Arena::attackRobotAt(int r, int c, int dir) {
 
     // If the robot does not survive the damage
     delete m_robots[index];
-    m_robots[index] = nullptr;
     // decrement the number of robots
     // set the pointer to robot at index to the pointer to the last one
     m_robots[index] = m_robots[--m_nRobots];
